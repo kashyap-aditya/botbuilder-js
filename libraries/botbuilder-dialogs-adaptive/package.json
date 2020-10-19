@@ -37,6 +37,7 @@
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
     "jsonpath": "^1.0.0",
+    "moment": "^2.29.1",
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {

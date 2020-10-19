@@ -44,6 +44,7 @@ export {
 } from './skills';
 export * from './skypeMentionNormalizeMiddleware';
 export * from './storage';
+export * from './queueStorage';
 export * from './stringUtils';
 export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';

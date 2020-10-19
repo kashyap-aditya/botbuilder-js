@@ -494,15 +494,15 @@ export class DialogContext {
      * - [replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
      * - [Dialog.endDialog](xref:botbuilder-dialogs.Dialog.endDialog)
      */
-    public async endDialog(result?: any): Promise<DialogTurnResult> {
+    public async endDialog<T = unknown>(result?: T): Promise<DialogTurnResult<T>> {
         // End the active dialog
         await this.endActiveDialog(DialogReason.endCalled, result);
 
         // Resume parent dialog
-        const instance: DialogInstance<any> = this.activeDialog;
+        const instance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog: Dialog<{}> = this.findDialog(instance.id);
+            const dialog = this.findDialog(instance.id);
             if (!dialog) {
                 throw new DialogContextError(
                     `DialogContext.endDialog(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`,
