@@ -1,3 +1,5 @@
+/* eslint-disable security/detect-object-injection */
+/* eslint-disable no-case-declarations */
 /**
  * @module adaptive-expressions
  */
