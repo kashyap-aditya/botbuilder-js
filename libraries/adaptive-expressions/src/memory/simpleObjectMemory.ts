@@ -15,14 +15,14 @@ import { MemoryInterface } from './memoryInterface';
  * Simple implement of MemoryInterface
  */
 export class SimpleObjectMemory implements MemoryInterface {
-    private memory: any = undefined;
+    private memory: unknown = undefined;
 
     /**
      * Initializes a new instance of the [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory) class.
      * This wraps a simple object as [MemoryInterface](xref:adaptive-expressions.MemoryInterface).
      * @param memory The object to wrap.
      */
-    public constructor(memory: any) {
+    public constructor(memory: unknown) {
         this.memory = memory;
     }
 
@@ -31,9 +31,9 @@ export class SimpleObjectMemory implements MemoryInterface {
      * @param obj  Common object.
      * @returns Simple memory instance.
      */
-    public static wrap(obj: any): MemoryInterface {
+    public static wrap(obj: MemoryInterface | unknown): MemoryInterface {
         if (Extensions.isMemoryInterface(obj)) {
-            return obj;
+            return obj as MemoryInterface;
         }
 
         return new SimpleObjectMemory(obj);
@@ -44,13 +44,13 @@ export class SimpleObjectMemory implements MemoryInterface {
      * @param path Given path.
      * @returns The value in the given path or undefined.
      */
-    public getValue(path: string): any {
+    public getValue(path: string): unknown {
         if (this.memory === undefined || path.length === 0) {
             return undefined;
         }
 
         const parts: string[] = path
-            .split(/[.\[\]]+/)
+            .split(/[.[\]]+/)
             .filter((u: string): boolean => u !== undefined && u !== '')
             .map((u: string): string => {
                 if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith("'") && u.endsWith("'"))) {
@@ -59,7 +59,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                     return u;
                 }
             });
-        let value: any;
+        let value: unknown;
         let curScope = this.memory;
 
         for (const part of parts) {
@@ -68,7 +68,7 @@ export class SimpleObjectMemory implements MemoryInterface {
             if (!isNaN(idx) && Array.isArray(curScope)) {
                 ({ value, error } = InternalFunctionUtils.accessIndex(curScope, idx));
             } else {
-                ({ value, error } = InternalFunctionUtils.accessProperty(curScope, part));
+                ({ value, error } = InternalFunctionUtils.accessProperty(curScope as Record<string, unknown>, part));
             }
 
             if (error) {
@@ -88,7 +88,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      * because we can't and shouldn't smart create structure in the middle
      * you can implement a customzied Scope that support such behavior
      */
-    public setValue(path: string, input: any): void {
+    public setValue(path: string, input: unknown): void {
         if (this.memory === undefined) {
             return;
         }
@@ -103,7 +103,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                     return u;
                 }
             });
-        let curScope: any = this.memory;
+        let curScope: unknown = this.memory;
         let curPath = '';
         let error: string = undefined;
 
@@ -115,7 +115,10 @@ export class SimpleObjectMemory implements MemoryInterface {
                 ({ value: curScope, error } = InternalFunctionUtils.accessIndex(curScope, idx));
             } else {
                 curPath = `.${parts[i]}`;
-                ({ value: curScope, error } = InternalFunctionUtils.accessProperty(curScope, parts[i]));
+                ({ value: curScope, error } = InternalFunctionUtils.accessProperty(
+                    curScope as Record<string, unknown>,
+                    parts[i]
+                ));
             }
 
             if (error) {
@@ -147,7 +150,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                 return;
             }
         } else {
-            error = this.setProperty(curScope, parts[parts.length - 1], input).error;
+            error = this.setProperty(curScope as Record<string, unknown>, parts[parts.length - 1], input).error;
             if (error) {
                 return;
             }
@@ -175,9 +178,9 @@ export class SimpleObjectMemory implements MemoryInterface {
     /**
      * @private
      */
-    private getCircularReplacer(): any {
+    private getCircularReplacer(): (_key: string, value: unknown) => unknown {
         const seen = new WeakSet();
-        return (_key: any, value: object): any => {
+        return (_key: string, value: unknown): unknown => {
             if (typeof value === 'object' && value) {
                 if (seen.has(value)) {
                     return;
@@ -191,8 +194,12 @@ export class SimpleObjectMemory implements MemoryInterface {
     /**
      * @private
      */
-    private setProperty(instance: any, property: string, value: any): { value: any; error: string } {
-        const result: any = value;
+    private setProperty(
+        instance: Record<string, unknown>,
+        property: string,
+        value: unknown
+    ): { value: unknown; error: string } {
+        const result: unknown = value;
         if (instance instanceof Map) {
             instance.set(property, value);
         } else {

@@ -25,6 +25,7 @@ const pushDownNot = (expression: Expression, inNot = false): Expression => {
     switch (expression.type) {
         case ExpressionType.And:
         case ExpressionType.Or:
+            // eslint-disable-next-line no-case-declarations
             const children = expression.children.map((child) => pushDownNot(child, inNot));
             if (children.length === 1) {
                 newExpr = children[0];
@@ -85,7 +86,7 @@ export class Trigger {
      * @param action Action to take when a trigger matches.
      * @param quantifiers Quantifiers to dynamically expand the expression.
      */
-    public constructor(tree: TriggerTree, expression?: Expression, action?: any, ...quantifiers: Quantifier[]) {
+    public constructor(tree: TriggerTree, expression?: Expression, action?: unknown, ...quantifiers: Quantifier[]) {
         this._tree = tree;
         this.action = action;
         this.originalExpression = expression;
@@ -112,7 +113,7 @@ export class Trigger {
     /**
      * Action to take when trigger is true.
      */
-    public readonly action: any;
+    public readonly action: unknown;
 
     /**
      * Gets list of expressions converted into Disjunctive Normal Form where ! is pushed to the leaves and
@@ -159,7 +160,7 @@ export class Trigger {
      * @param state The scope for looking up variables.
      * @returns A boolean value inidicating whether there is a member matches.
      */
-    public matches(nodeClause: Clause, state: MemoryInterface | any): boolean {
+    public matches(nodeClause: Clause, state: MemoryInterface): boolean {
         return this.clauses.find((clause: Clause) => clause.matches(nodeClause, state)) !== undefined;
     }
 

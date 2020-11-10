@@ -39,7 +39,9 @@ export class InternalFunctionUtils {
      * @param timexExpr String or TimexProperty input.
      * @returns TimexProperty and error.
      */
-    public static parseTimexProperty(timexExpr: any): { timexProperty: TimexProperty; error: string } {
+    public static parseTimexProperty(
+        timexExpr: TimexProperty | string | unknown
+    ): { timexProperty: TimexProperty; error: string } {
         let parsed: TimexProperty;
         if (timexExpr instanceof TimexProperty) {
             parsed = timexExpr;
@@ -77,13 +79,13 @@ export class InternalFunctionUtils {
      * @param isDescending Descending flag.
      */
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
-        return (expression: Expression, state: any, options: Options): ValueWithError => {
-            let result: any;
+        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+            let result: unknown;
             const { value: oriArr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
             let error = childrenError;
             if (!error) {
                 if (Array.isArray(oriArr)) {
-                    const arr: any = oriArr.slice(0);
+                    const arr: unknown[] = oriArr.slice(0);
                     if (expression.children.length === 1) {
                         if (isDescending) {
                             result = arr.sort().reverse();
@@ -118,13 +120,13 @@ export class InternalFunctionUtils {
      * @param property Property to lookup.
      * @returns Value and error information if any.
      */
-    public static accessIndex(instance: any, index: number): ValueWithError {
+    public static accessIndex(instance: unknown[] | unknown, index: number): ValueWithError {
         // NOTE: This returns undefined rather than an error if property is not present
         if (instance === null || instance === undefined) {
             return { value: undefined, error: undefined };
         }
 
-        let value: any;
+        let value: unknown;
         let error: string;
 
         if (Array.isArray(instance)) {
@@ -145,15 +147,19 @@ export class InternalFunctionUtils {
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
-    public static verifyTimestamp(value: any): string | undefined {
+    public static verifyTimestamp(value: unknown): string | undefined {
         let error: string;
-        try {
-            const parsedData: Date = new Date(value);
-            if (Number.isNaN(parsedData.getTime())) {
+        if (typeof value === 'string' || typeof value === 'number' || value instanceof Date) {
+            try {
+                const parsedData: Date = new Date(value);
+                if (Number.isNaN(parsedData.getTime())) {
+                    error = `${value} is not a valid datetime string.`;
+                }
+            } catch (e) {
                 error = `${value} is not a valid datetime string.`;
             }
-        } catch (e) {
-            error = `${value} is not a valid datetime string.`;
+        } else {
+            error = `${value} is not a string, number or Date.`;
         }
 
         return error;
@@ -164,17 +170,21 @@ export class InternalFunctionUtils {
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
-    public static verifyISOTimestamp(value: any): string | undefined {
+    public static verifyISOTimestamp(value: unknown): string | undefined {
         let error: string;
-        try {
-            const parsedData: Date = new Date(value);
-            if (Number.isNaN(parsedData.getTime())) {
+        if (typeof value === 'string' || typeof value === 'number' || value instanceof Date) {
+            try {
+                const parsedData: Date = new Date(value);
+                if (Number.isNaN(parsedData.getTime())) {
+                    error = `${value} is not a valid datetime string.`;
+                } else if (parsedData.toISOString() !== value) {
+                    error = `${value} is not a ISO format datetime string.`;
+                }
+            } catch (e) {
                 error = `${value} is not a valid datetime string.`;
-            } else if (parsedData.toISOString() !== value) {
-                error = `${value} is not a ISO format datetime string.`;
             }
-        } catch (e) {
-            error = `${value} is not a valid datetime string.`;
+        } else {
+            error = `${value} is not a string, number or Date.`;
         }
 
         return error;
@@ -186,8 +196,8 @@ export class InternalFunctionUtils {
      * @param transform Transform function.
      * @returns New timestamp and error.
      */
-    public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): ValueWithError {
-        let value: any;
+    public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => unknown): ValueWithError {
+        let value: unknown;
         const error: string = this.verifyISOTimestamp(timeStamp);
         if (!error) {
             value = transform !== undefined ? transform(new Date(timeStamp)) : timeStamp;
@@ -201,7 +211,7 @@ export class InternalFunctionUtils {
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
-        let result: any;
+        let result: bigInt.BigInteger;
         const { value: parsed, error } = this.parseTimestamp(timeStamp);
         if (!error) {
             const unixMilliSec: number = parseInt(moment(parsed).utc().format('x'), 10);
@@ -219,16 +229,16 @@ export class InternalFunctionUtils {
      * @param property Property to lookup.
      * @returns Value and error information if any.
      */
-    public static accessProperty(instance: any, property: string): ValueWithError {
+    public static accessProperty(instance: Record<string, unknown>, property: string): ValueWithError {
         // NOTE: This returns undefined rather than an error if property is not present
         if (!instance) {
             return { value: undefined, error: undefined };
         }
 
-        let value: any;
+        let value: unknown;
         let error: string;
-        if (instance instanceof Map && (instance as Map<string, any>) !== undefined) {
-            const instanceMap: Map<string, any> = instance as Map<string, any>;
+        if (instance instanceof Map && (instance as Map<string, unknown>) !== undefined) {
+            const instanceMap: Map<string, unknown> = instance as Map<string, unknown>;
             value = instanceMap.get(property);
             if (value === undefined) {
                 const prop: string = Array.from(instanceMap.keys()).find(
@@ -256,7 +266,7 @@ export class InternalFunctionUtils {
      * @param path Path string.
      * @param options Options.
      */
-    public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
+    public static wrapGetValue(state: MemoryInterface, path: string, options: Options): unknown {
         const result = state.getValue(path);
         if (result !== undefined && result !== null) {
             return result;
@@ -286,7 +296,7 @@ export class InternalFunctionUtils {
      * @param instance Computed value.
      * @returns True if boolean true or non-null.
      */
-    public static isLogicTrue(instance: any): boolean {
+    public static isLogicTrue(instance: unknown): boolean {
         let result = true;
 
         if (typeof instance === 'boolean') {
@@ -305,7 +315,7 @@ export class InternalFunctionUtils {
      * @param options Options.
      */
     public static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let result: any[];
+        let result: unknown[];
         const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
         if (!instance) {
@@ -327,7 +337,7 @@ export class InternalFunctionUtils {
                 const stackedMemory = StackedMemory.wrap(state);
                 result = [];
                 for (const item of arr) {
-                    const local: Map<string, any> = new Map<string, any>([[iteratorName, item]]);
+                    const local: Map<string, unknown> = new Map<string, unknown>([[iteratorName, item]]);
 
                     stackedMemory.push(SimpleObjectMemory.wrap(local));
                     const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, options);
@@ -352,7 +362,7 @@ export class InternalFunctionUtils {
             throw new Error(`foreach expect 3 parameters, found ${expression.children.length}`);
         }
 
-        const second: any = expression.children[1];
+        const second: Expression = expression.children[1];
         if (!(second.type === ExpressionType.Accessor && second.children.length === 1)) {
             throw new Error(`Second parameter of foreach is not an identifier : ${second}`);
         }
@@ -421,7 +431,7 @@ export class InternalFunctionUtils {
      * Equal helper function.
      * @param args Input args. Compare the first param and second param.
      */
-    public static isEqual(args: any[]): boolean {
+    public static isEqual(args: unknown[]): boolean {
         if (args.length === 0) {
             return false;
         }
@@ -452,7 +462,7 @@ export class InternalFunctionUtils {
      * Helper function of get the number of properties of an object.
      * @param obj An object.
      */
-    private static getPropertyCount(obj: any): number {
+    private static getPropertyCount(obj: unknown): number {
         let count = -1;
         if (!Array.isArray(obj)) {
             if (obj instanceof Map) {

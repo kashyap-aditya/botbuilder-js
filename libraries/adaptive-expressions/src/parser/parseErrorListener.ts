@@ -6,12 +6,13 @@
  * Licensed under the MIT License.
  */
 import { ANTLRErrorListener, RecognitionException, Recognizer } from 'antlr4ts';
+import { ATNSimulator } from 'antlr4ts/atn/ATNSimulator';
 
 // tslint:disable-next-line: completed-docs
 /**
  * Expression parser error listener.
  */
-export class ParseErrorListener implements ANTLRErrorListener<any> {
+export class ParseErrorListener implements ANTLRErrorListener<unknown> {
     public static readonly Instance: ParseErrorListener = new ParseErrorListener();
 
     /**
@@ -24,7 +25,7 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
      * @param _e The `RecognitionException`.
      */
     public syntaxError<T>(
-        _recognizer: Recognizer<T, any>,
+        _recognizer: Recognizer<T, ATNSimulator>,
         _offendingSymbol: T,
         line: number,
         charPositionInLine: number,

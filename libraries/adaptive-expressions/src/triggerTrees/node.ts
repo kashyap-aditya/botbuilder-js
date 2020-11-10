@@ -1,3 +1,5 @@
+/* eslint-disable no-case-declarations */
+/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -97,7 +99,7 @@ export class Node {
      * @param state Frame to evaluate against.
      * @returns List of the most specific matches found.
      */
-    public matches(state: MemoryInterface | any): Trigger[] {
+    public matches(state: MemoryInterface): Trigger[] {
         const matches = new Set<Trigger>();
         this._matches(state, matches, new Map<Node, boolean>());
         return Array.from(matches);
@@ -132,6 +134,7 @@ export class Node {
         switch (relationship) {
             case RelationshipType.equal:
                 // Ensure action is not already there
+                // eslint-disable-next-line no-case-declarations
                 const found =
                     this._allTriggers.find(
                         (existing) => trigger.action != undefined && trigger.action === existing.action
@@ -211,7 +214,7 @@ export class Node {
         return op;
     }
 
-    private _matches(state: MemoryInterface | any, matches: Set<Trigger>, matched: Map<Node, boolean>): boolean {
+    private _matches(state: MemoryInterface, matches: Set<Trigger>, matched: Map<Node, boolean>): boolean {
         let found = matched.get(this);
         if (found) {
             return true;

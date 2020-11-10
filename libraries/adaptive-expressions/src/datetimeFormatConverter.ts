@@ -63,7 +63,7 @@ enum State {
  */
 export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
     let fmtResult = '';
-    let fmtState: any = State.None;
+    let fmtState: number = State.None;
     let lTokenBuffer = '';
     if (fmtString.length === 0) {
         return fmtResult;
