@@ -38,9 +38,11 @@ export class AddToTime extends ExpressionEvaluator {
         let error = childrenError;
         if (!error) {
             const format: string =
-                args.length === 4 ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat;
+                args.length === 4
+                    ? FunctionUtils.timestampFormatter(args[3] as string)
+                    : FunctionUtils.DefaultDateTimeFormat;
             if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
-                ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format));
+                ({ value, error } = AddToTime.evalAddToTime(args[0], args[1] as number, args[2], format));
             } else {
                 error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
             }
@@ -62,7 +64,7 @@ export class AddToTime extends ExpressionEvaluator {
         const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
         let error = parseError;
         if (!error) {
-            const dt: any = moment(parsed).utc();
+            const dt: moment.Moment = moment(parsed).utc();
             let addedTime = dt;
             let timeUnitMark: string;
             switch (timeUnit) {
@@ -108,7 +110,7 @@ export class AddToTime extends ExpressionEvaluator {
             }
 
             if (!error) {
-                addedTime = dt.add(interval, timeUnitMark);
+                addedTime = dt.add(interval, timeUnitMark as moment.unitOfTime.DurationConstructor);
                 ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(addedTime, format));
             }
         }

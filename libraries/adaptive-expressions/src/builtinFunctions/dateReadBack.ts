@@ -7,7 +7,7 @@
  */
 
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
-
+import moment from 'moment';
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -30,15 +30,15 @@ export class DateReadBack extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
-            let value: any;
+        return FunctionUtils.applyWithError((args: Readonly<string[]>): { value: string; error: string } => {
+            let value: unknown;
             let error: string;
             const dateFormat = 'YYYY-MM-DD';
             ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0]));
             if (!error) {
-                const timestamp1: Date = new Date(value.format(dateFormat));
+                const timestamp1: Date = new Date(moment(value).format(dateFormat));
                 ({ value, error } = InternalFunctionUtils.parseTimestamp(args[1]));
-                const timestamp2: string = value.format(dateFormat);
+                const timestamp2: string = moment(value).format(dateFormat);
                 const timex: TimexProperty = new TimexProperty(timestamp2);
 
                 return { value: timex.toNaturalLanguage(timestamp1), error };

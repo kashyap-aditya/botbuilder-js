@@ -26,7 +26,7 @@ export class Float extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError((args: Readonly<string[]>): { value: number; error: string } => {
             let error: string;
             const value: number = parseFloat(args[0]);
             if (!FunctionUtils.isNumber(value)) {

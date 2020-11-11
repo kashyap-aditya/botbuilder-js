@@ -28,7 +28,7 @@ export class AddProperty extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } => {
+        return FunctionUtils.applyWithError((args: Readonly<unknown[]>): { value: unknown; error: string } => {
             let error: string;
             const temp: Record<string, unknown> = args[0] as Record<string, unknown>;
             const prop = String(args[1]);

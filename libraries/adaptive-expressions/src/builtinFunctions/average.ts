@@ -26,9 +26,10 @@ export class Average extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): number => args[0].reduce((x: number, y: number): number => x + y) / args[0].length,
-            FunctionUtils.verifyNumericList
-        );
+        return FunctionUtils.apply((args: Readonly<unknown[]>): number => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const args0 = args[0] as any[];
+            return args0.reduce((x: number, y: number): number => x + y) / args0.length;
+        }, FunctionUtils.verifyNumericList);
     }
 }

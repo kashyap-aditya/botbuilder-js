@@ -31,9 +31,9 @@ export class FormatTicks extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError((args: Readonly<unknown[]>): { value: string; error: string } => {
             let error: string;
-            let arg: any = args[0];
+            let arg: unknown = args[0];
             if (typeof arg === 'number') {
                 arg = bigInt(arg);
             }
@@ -50,12 +50,12 @@ export class FormatTicks extends ExpressionEvaluator {
                     .toJSNumber();
             }
 
-            let value: any;
+            let value: string;
             if (!error) {
-                const dateString: string = new Date(arg).toISOString();
+                const dateString: string = new Date(arg as number).toISOString();
                 value =
                     args.length === 2
-                        ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1]))
+                        ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1] as string))
                         : dateString;
             }
 

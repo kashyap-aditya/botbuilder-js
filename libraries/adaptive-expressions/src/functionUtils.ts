@@ -462,7 +462,10 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static apply(func: (arg0: unknown[]) => unknown, verify?: VerifyExpression): EvaluateExpressionDelegate {
+    public static apply(
+        func: (arg0: Readonly<unknown[]>) => unknown,
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: unknown;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
@@ -486,7 +489,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithError(
-        func: (arg0: unknown[]) => { value: unknown; error: string },
+        func: (arg0: Readonly<unknown[]>) => { value: unknown; error: string },
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
@@ -512,7 +515,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptionsAndError(
-        func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
+        func: (arg0: Readonly<unknown[]>, options: Options) => { value: unknown; error: string },
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
@@ -538,7 +541,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applySequence(
-        func: (arg0: unknown[]) => unknown,
+        func: (arg0: Readonly<unknown[]>) => unknown,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: unknown[]): unknown => {
@@ -561,7 +564,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applySequenceWithError(
-        func: (arg0: unknown[]) => { value: unknown; error: string },
+        func: (arg0: Readonly<unknown[]>) => { value: unknown; error: string },
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } => {

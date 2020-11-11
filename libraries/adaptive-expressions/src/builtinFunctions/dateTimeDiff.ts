@@ -30,20 +30,20 @@ export class DateTimeDiff extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let value: any;
-        let dateTimeStart: any;
-        let dateTimeEnd: any;
+        let value: number;
+        let dateTimeStart: bigInt.BigInteger;
+        let dateTimeEnd: bigInt.BigInteger;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
-            ({ value: dateTimeStart, error: error } = InternalFunctionUtils.ticks(args[0]));
+            ({ value: dateTimeStart, error: error } = InternalFunctionUtils.ticks(args[0] as string));
             if (!error) {
-                ({ value: dateTimeEnd, error: error } = InternalFunctionUtils.ticks(args[1]));
+                ({ value: dateTimeEnd, error: error } = InternalFunctionUtils.ticks(args[1] as string));
             }
         }
 
         if (!error) {
-            value = dateTimeStart - dateTimeEnd;
+            value = dateTimeStart.minus(dateTimeEnd).toJSNumber();
         }
 
         return { value, error };

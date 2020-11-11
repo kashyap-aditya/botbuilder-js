@@ -30,7 +30,7 @@ export class EndsWith extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): boolean =>
+            (args: Readonly<string[]>): boolean =>
                 InternalFunctionUtils.parseStringOrUndefined(args[0]).endsWith(
                     InternalFunctionUtils.parseStringOrUndefined(args[1])
                 ),

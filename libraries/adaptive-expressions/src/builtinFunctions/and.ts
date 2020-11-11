@@ -35,7 +35,9 @@ export class And extends ExpressionEvaluator {
         for (const child of expression.children) {
             const newOptions = new Options(options);
             newOptions.nullSubstitution = undefined;
-            ({ value: result, error } = child.tryEvaluate(state, newOptions));
+            // eslint-disable-next-line prefer-const
+            let { value, error } = child.tryEvaluate(state, newOptions);
+            result = value as boolean;
             if (!error) {
                 if (InternalFunctionUtils.isLogicTrue(result)) {
                     result = true;

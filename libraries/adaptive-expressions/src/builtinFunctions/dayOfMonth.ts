@@ -28,7 +28,7 @@ export class DayOfMonth extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: any[]): any =>
+            (args: Readonly<string[]>): { value: unknown; error: string } =>
                 InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCDate()),
             FunctionUtils.verifyString
         );

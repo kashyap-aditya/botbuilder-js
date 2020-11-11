@@ -31,15 +31,15 @@ export class FormatDateTime extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError((args: Readonly<(Date | string)[]>): { value: unknown; error: string } => {
             let error: string;
-            let arg: any = args[0];
+            let arg: Date | string = args[0];
             if (typeof arg === 'string') {
                 error = InternalFunctionUtils.verifyTimestamp(arg.toString());
             } else {
                 arg = arg.toISOString();
             }
-            let value: any;
+            let value: unknown;
             if (!error) {
                 let dateString: string;
                 if (arg.endsWith('Z')) {
@@ -54,7 +54,9 @@ export class FormatDateTime extends ExpressionEvaluator {
 
                 value =
                     args.length === 2
-                        ? moment(dateString).utc().format(FunctionUtils.timestampFormatter(args[1]))
+                        ? moment(dateString)
+                              .utc()
+                              .format(FunctionUtils.timestampFormatter(args[1] as string))
                         : dateString;
             }
 

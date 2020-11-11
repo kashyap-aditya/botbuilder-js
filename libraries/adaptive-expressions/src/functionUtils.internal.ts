@@ -194,7 +194,10 @@ export class InternalFunctionUtils {
      * @param transform Transform function.
      * @returns New timestamp and error.
      */
-    public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => unknown): ValueWithError {
+    public static parseTimestamp(
+        timeStamp: string,
+        transform?: (arg0: Date) => unknown
+    ): { value: unknown; error: string } {
         let value: unknown;
         const error: string = this.verifyISOTimestamp(timeStamp);
         if (!error) {
@@ -208,7 +211,7 @@ export class InternalFunctionUtils {
      * Convert a string input to ticks number.
      * @param timeStamp String timestamp input.
      */
-    public static ticks(timeStamp: string): ValueWithError {
+    public static ticks(timeStamp: string): { value: bigInt.BigInteger; error: string } {
         let result: bigInt.BigInteger;
         const { value: parsed, error } = this.parseTimestamp(timeStamp);
         if (!error) {
@@ -413,7 +416,7 @@ export class InternalFunctionUtils {
      * @param timedata Input date time.
      * @param format Format flag.
      */
-    public static returnFormattedTimeStampStr(timedata: Moment, format: string): ValueWithError {
+    public static returnFormattedTimeStampStr(timedata: Moment, format: string): { value: string; error: string } {
         let result: string;
         let error: string;
         try {

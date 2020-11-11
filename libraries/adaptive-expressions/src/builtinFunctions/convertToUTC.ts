@@ -33,12 +33,14 @@ export class ConvertToUTC extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let value: any;
+        let value: unknown;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
             const format: string =
-                args.length === 3 ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat;
+                args.length === 3
+                    ? FunctionUtils.timestampFormatter(args[2] as string)
+                    : FunctionUtils.DefaultDateTimeFormat;
             if (typeof args[0] === 'string' && typeof args[1] === 'string') {
                 ({ value, error } = ConvertToUTC.evalConvertToUTC(args[0], args[1], format));
             } else {
