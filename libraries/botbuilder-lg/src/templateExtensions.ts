@@ -113,7 +113,7 @@ export class TemplateExtensions {
      * @returns Escaped text.
      */
     public static evalEscape(exp: string): string {
-        const validCharactersDict: any = {
+        const validCharactersDict: Record<string, string> = {
             '\\r': '\r',
             '\\n': '\n',
             '\\t': '\t',
@@ -137,7 +137,7 @@ export class TemplateExtensions {
      * Generate new guid string.
      */
     public static newGuid(): string {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: unknown): string => {
             const r: number = (Math.random() * 16) | 0;
             const v: number = c === 'x' ? r : (r & 0x3) | 0x8;
 
