@@ -18,6 +18,8 @@ import {
     Constant,
     FunctionUtils,
     Options,
+    MemoryInterface,
+    ValueWithError,
 } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
@@ -462,7 +464,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     /**
      * @private
      */
-    private evalExpression(exp: string, context: ParserRuleContext, inlineContent = '', errorPrefix = ''): any[] {
+    private evalExpression(exp: string, context: ParserRuleContext, inlineContent = '', errorPrefix = ''): unknown[] {
         exp = TemplateExtensions.trimExpression(exp);
         const { value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope);
 
@@ -486,7 +488,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     /**
      * @private
      */
-    private evalByAdaptiveExpression(exp: string, scope: any): any {
+    private evalByAdaptiveExpression(exp: string, scope: MemoryInterface): ValueWithError {
         const expanderExpression: Expression = this.expanderExpressionParser.parse(exp);
         const evaluatorExpression: Expression = this.evaluatorExpressionParser.parse(exp);
         const parse: Expression = this.reconstructExpression(expanderExpression, evaluatorExpression, false);
@@ -527,7 +529,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return str1 + str2;
     }
 
-    private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup, isExpander: boolean): any => (
+    private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup, isExpander: boolean): unknown => (
         name: string
     ): ExpressionEvaluator => {
         const standardFunction = baseLookup(name);
