@@ -19,6 +19,6 @@ export class AddDays extends TimeTransformEvaluator {
      * Initializes a new instance of the [AddDays](xref:adaptive-expressions.AddDays) class.
      */
     public constructor() {
-        super(ExpressionType.AddDays, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'd').toDate());
+        super(ExpressionType.AddDays, (ts: Date, num: unknown): Date => moment(ts).utc().add(num, 'd').toDate());
     }
 }

@@ -32,7 +32,7 @@ export class AddToTime extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let value: any;
+        let value: unknown;
 
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;

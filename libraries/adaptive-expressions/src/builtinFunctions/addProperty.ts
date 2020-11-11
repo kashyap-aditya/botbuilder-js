@@ -28,9 +28,9 @@ export class AddProperty extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } => {
             let error: string;
-            const temp: any = args[0];
+            const temp: Record<string, unknown> = args[0] as Record<string, unknown>;
             const prop = String(args[1]);
             if (prop in temp) {
                 error = `${prop} already exists`;

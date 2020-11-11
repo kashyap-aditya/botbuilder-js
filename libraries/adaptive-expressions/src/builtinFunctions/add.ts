@@ -27,8 +27,8 @@ export class Add extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applySequenceWithError((args: any[]): any => {
-            let value: any;
+        return FunctionUtils.applySequenceWithError((args: unknown[]): { value: unknown; error: string } => {
+            let value: unknown;
             let error: string;
             const stringConcat = !FunctionUtils.isNumber(args[0]) || !FunctionUtils.isNumber(args[1]);
             if (
@@ -46,8 +46,8 @@ export class Add extends ExpressionEvaluator {
                 } else {
                     value = args[0].toString() + args[1].toString();
                 }
-            } else {
-                value = args[0] + args[1];
+            } else if (FunctionUtils.isNumber(args[0]) && FunctionUtils.isNumber(args[1])) {
+                value = (args[0] as number) + (args[1] as number);
             }
 
             return { value, error };

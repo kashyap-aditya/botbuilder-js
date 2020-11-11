@@ -21,12 +21,12 @@ import { Expression } from '../expression';
  *     prop = "=user.name" => "Joe"
  *     prop = "\=user" => "=user".
  */
-export class ValueExpression extends ExpressionProperty<any> {
+export class ValueExpression extends ExpressionProperty<unknown> {
     /**
      * Initializes a new instance of the [ValueExpression](xref:adaptive-expressions.ValueExpression) class.
      * @param value An object of `any` kind or a `string` expression.
      */
-    public constructor(value?: any | string | Expression) {
+    public constructor(value?: string | Expression | unknown) {
         super(value);
     }
 
@@ -34,7 +34,7 @@ export class ValueExpression extends ExpressionProperty<any> {
      * Set value as value expression.
      * @param value Value to set.
      */
-    public setValue(value: any | string | Expression): void {
+    public setValue(value: string | Expression | unknown): void {
         super.setValue(undefined);
 
         if (typeof value == 'string') {
@@ -47,7 +47,7 @@ export class ValueExpression extends ExpressionProperty<any> {
             }
 
             // keep the string as quoted expression, which will be literal unless string interpolation is used.
-            this.expressionText = `=\`${value.replace('`', '\\`')}\``;
+            this.expressionText = `=\`${(value as string).replace('`', '\\`')}\``;
             return;
         }
 
