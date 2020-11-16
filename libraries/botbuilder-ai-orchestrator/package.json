@@ -27,11 +27,11 @@
     }
   },
   "dependencies": {
-    "orchestrator-core": "beta",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
+    "orchestrator-core": "^4.11.1-beta.3",
     "read-text-file": "1.1.0"
   },
   "scripts": {

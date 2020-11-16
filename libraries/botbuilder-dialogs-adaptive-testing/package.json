@@ -21,12 +21,12 @@
     }
   },
   "dependencies": {
+    "adaptive-expressions": "4.1.6",
     "botbuilder-ai": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
-    "botbuilder-dialogs-declarative": "4.1.6",
-    "adaptive-expressions": "4.1.6"
+    "botbuilder-dialogs-declarative": "4.1.6"
   },
   "devDependencies": {
     "nock": "^11.9.1"
