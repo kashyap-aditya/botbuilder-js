@@ -3,9 +3,9 @@ const path = require('path');
 module.exports = () => {
     return {
         mode: 'none',
-        entry: path.resolve(__dirname, './src/index.ts'),
+        entry: path.resolve(__dirname, 'src', 'index.ts'),
         output: {
-            path: path.resolve(__dirname, './dist'),
+            path: path.resolve(__dirname, 'dist'),
             libraryTarget: 'amd',
             filename: 'index.js',
         },
@@ -18,7 +18,7 @@ module.exports = () => {
                 {
                     test: /\.tsx?$/,
                     loader: 'ts-loader',
-                    include: path.resolve(__dirname, './src'),
+                    include: path.resolve(__dirname, 'src'),
                 },
                 {
                     test: /\.js$/,
@@ -28,14 +28,11 @@ module.exports = () => {
                         },
                     ],
                     include: [
-                        path.resolve(__dirname, './node_modules/adaptive-expressions'),
-                        path.resolve(
-                            __dirname,
-                            './node_modules/@microsoft/recognizers-text-data-types-timex-expression'
-                        ),
-                        path.resolve(__dirname, './node_modules/antlr4ts'),
-                        path.resolve(__dirname, './node_modules/lru-cache'),
-                        path.resolve(__dirname, './node_modules/yallist'),
+                        require.resolve('adaptive-expressions'),
+                        require.resolve('@microsoft/recognizers-text-data-types-timex-expression'),
+                        require.resolve('antlr4ts'),
+                        require.resolve('lru-cache'),
+                        require.resolve('yallist'),
                     ],
                 },
             ],
