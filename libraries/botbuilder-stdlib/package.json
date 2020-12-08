@@ -33,5 +33,14 @@
     "_ts3.4",
     "lib",
     "src"
-  ]
+  ],
+  "peerDependencies": {
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.7",
+    "nock": "^13.0.5",
+    "node-fetch": "^2.6.1",
+    "sinon": "^9.2.1"
+  }
 }
